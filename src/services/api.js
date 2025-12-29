@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   // baseURL: "http://localhost:5000/api",
-  baseURL: "https://epitome-backend-kr6s.onrender.com/api",
+  baseURL: "https://epitome-backend-kr6s.onrender.com/api"
 });
 
 /* 🔐 Attach token to every request */
