@@ -3,18 +3,27 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AdminDashboard from "./pages/AdminDashboard";
 import ChemistDashboard from "./pages/ChemistDashboard";
+import CustomerSupport from "./pages/CustomerSupport";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
 /* 🔒 Protected Route Component */
 function ProtectedRoute({ children, role }) {
-  const { userRole } = useAuth();
+  const { userRole, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   if (!userRole) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   if (role && userRole !== role) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
@@ -24,13 +33,13 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        {/* App Wrapper */}
         <div className="min-h-screen bg-gray-100">
           <Routes>
-            {/* Public Route */}
+            {/* Public Routes */}
             <Route path="/" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-            {/* Admin Route */}
+            {/* Admin Dashboard */}
             <Route
               path="/admin"
               element={
@@ -40,7 +49,7 @@ export default function App() {
               }
             />
 
-            {/* Chemist Route */}
+            {/* Chemist Dashboard */}
             <Route
               path="/chemist"
               element={
@@ -50,7 +59,15 @@ export default function App() {
               }
             />
 
-            <Route path="/register" element={<Register />} />
+            {/* Customer Support (Admin + Chemist) */}
+            <Route
+              path="/support"
+              element={
+                <ProtectedRoute>
+                  <CustomerSupport />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
       </BrowserRouter>

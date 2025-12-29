@@ -25,8 +25,7 @@ export default function OrderTable({ medicines }) {
     }, 0);
   };
 
-  const getGST = () => (getSubTotal() * 12) / 100;
-
+  const getGST = () => (getSubTotal() * 5) / 100;
   const getGrandTotal = () => getSubTotal() + getGST();
 
   const placeOrder = async () => {
@@ -47,9 +46,8 @@ export default function OrderTable({ medicines }) {
       await api.post("/orders", { items: orderItems });
       alert("Order placed successfully!");
       setQuantities({});
-      fetchMyOrders(); // refresh orders
+      fetchMyOrders();
     } catch (err) {
-      console.error(err);
       alert("Order failed");
     }
   };
@@ -76,62 +74,65 @@ export default function OrderTable({ medicines }) {
       {/* ======================
           PLACE ORDER SECTION
       ====================== */}
-      <div className="bg-white p-6 rounded-xl shadow">
-        <h2 className="text-xl font-bold mb-4 text-green-700">
+      <div className="bg-white p-4 sm:p-6 rounded-xl shadow">
+        <h2 className="text-lg sm:text-xl font-bold mb-4 text-green-700">
           Place New Order
         </h2>
 
-        <table className="w-full border-collapse border text-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border p-2">Medicine</th>
-              <th className="border p-2">Company</th>
-              <th className="border p-2">MRP</th>
-              <th className="border p-2">Rate</th>
-              <th className="border p-2">Scheme</th>
-              <th className="border p-2">Qty</th>
-              <th className="border p-2">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {medicines.map((med) => (
-              <tr key={med._id} className="text-center">
-                <td className="border p-2 font-semibold">{med.name}</td>
-                <td className="border p-2">{med.company}</td>
-                <td className="border p-2 text-gray-500">₹{med.price}</td>
-                <td className="border p-2 text-green-600 font-bold">
-                  ₹{med.rate}
-                </td>
-                <td className="border p-2">{med.scheme || "-"}</td>
-                <td className="border p-2">
-                  <input
-                    type="number"
-                    min="0"
-                    className="w-20 border p-1 rounded"
-                    value={quantities[med._id] || ""}
-                    onChange={(e) =>
-                      handleQtyChange(med._id, e.target.value)
-                    }
-                  />
-                </td>
-                <td className="border p-2 font-bold">
-                  ₹{getItemTotal(med)}
-                </td>
+        {/* Scrollable table for mobile */}
+        <div className="overflow-x-auto">
+          <table className="min-w-[800px] w-full border text-sm">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="border p-2">Medicine</th>
+                <th className="border p-2">Company</th>
+                <th className="border p-2">MRP</th>
+                <th className="border p-2">Rate</th>
+                <th className="border p-2">Scheme</th>
+                <th className="border p-2">Qty</th>
+                <th className="border p-2">Total</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {medicines.map((med) => (
+                <tr key={med._id} className="text-center">
+                  <td className="border p-2 font-semibold">{med.name}</td>
+                  <td className="border p-2">{med.company}</td>
+                  <td className="border p-2 text-gray-500">₹{med.price}</td>
+                  <td className="border p-2 text-green-600 font-bold">
+                    ₹{med.rate}
+                  </td>
+                  <td className="border p-2">{med.scheme || "-"}</td>
+                  <td className="border p-2">
+                    <input
+                      type="number"
+                      min="0"
+                      className="w-16 sm:w-20 border p-1 rounded"
+                      value={quantities[med._id] || ""}
+                      onChange={(e) =>
+                        handleQtyChange(med._id, e.target.value)
+                      }
+                    />
+                  </td>
+                  <td className="border p-2 font-bold">
+                    ₹{getItemTotal(med)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {/* Order Summary */}
         <div className="mt-6 flex justify-end">
-          <div className="bg-gray-50 border rounded-lg p-4 w-80">
+          <div className="bg-gray-50 border rounded-lg p-4 w-full sm:w-80">
             <h3 className="text-lg font-bold mb-3">Order Summary</h3>
             <div className="flex justify-between text-sm mb-2">
               <span>Subtotal</span>
               <span>₹{getSubTotal()}</span>
             </div>
             <div className="flex justify-between text-sm mb-2">
-              <span>GST (12%)</span>
+              <span>GST (5%)</span>
               <span>₹{getGST()}</span>
             </div>
             <hr className="my-2" />
@@ -145,7 +146,7 @@ export default function OrderTable({ medicines }) {
         <div className="flex justify-end mt-4">
           <button
             onClick={placeOrder}
-            className="bg-green-600 hover:bg-green-700 text-white px-8 py-2 rounded"
+            className="bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-2 rounded w-full sm:w-auto"
           >
             Place Order
           </button>
@@ -156,14 +157,12 @@ export default function OrderTable({ medicines }) {
           YOUR ORDERS SECTION
       ====================== */}
       <div>
-        <h2 className="text-xl font-bold mb-4 text-blue-700">
+        <h2 className="text-lg sm:text-xl font-bold mb-4 text-blue-700">
           Your Orders
         </h2>
 
         {orders.length === 0 ? (
-          <p className="text-gray-500 text-center">
-            No orders yet
-          </p>
+          <p className="text-gray-500 text-center">No orders yet</p>
         ) : (
           <div className="space-y-6">
             {orders.map((order) => (
@@ -171,13 +170,13 @@ export default function OrderTable({ medicines }) {
                 key={order._id}
                 className="bg-white rounded-lg shadow p-4"
               >
-                <div className="flex justify-between mb-3">
+                <div className="flex justify-between items-center mb-3">
                   <h3 className="font-bold">
                     Order #{order._id.slice(-5)}
                   </h3>
                   <span
                     className={`px-3 py-1 rounded text-sm font-semibold ${
-                      order.status === "Dispatched"
+                      order.status === "DISPATCHED"
                         ? "bg-green-100 text-green-700"
                         : "bg-yellow-100 text-yellow-700"
                     }`}
@@ -186,42 +185,68 @@ export default function OrderTable({ medicines }) {
                   </span>
                 </div>
 
-                <table className="w-full text-sm border">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="p-2 border">Medicine</th>
-                      <th className="p-2 border">Company</th>
-                      <th className="p-2 border">Qty</th>
-                      <th className="p-2 border">Rate</th>
-                      <th className="p-2 border">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {order.items.map((item, i) => (
-                      <tr key={i}>
-                        <td className="p-2 border">
-                          {item.medicine?.name}
-                        </td>
-                        <td className="p-2 border">
-                          {item.medicine?.company}
-                        </td>
-                        <td className="p-2 border text-center">
-                          {item.quantity}
-                        </td>
-                        <td className="p-2 border text-right">
-                          ₹{item.rate}
-                        </td>
-                        <td className="p-2 border text-right">
-                          ₹{item.quantity * item.rate}
-                        </td>
+                {/* Desktop table */}
+                <div className="hidden sm:block overflow-x-auto">
+                  <table className="w-full text-sm border">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="p-2 border">Medicine</th>
+                        <th className="p-2 border">Company</th>
+                        <th className="p-2 border">Qty</th>
+                        <th className="p-2 border">Rate</th>
+                        <th className="p-2 border">Total</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {order.items.map((item, i) => (
+                        <tr key={i}>
+                          <td className="p-2 border">
+                            {item.medicine?.name}
+                          </td>
+                          <td className="p-2 border">
+                            {item.medicine?.company}
+                          </td>
+                          <td className="p-2 border text-center">
+                            {item.quantity}
+                          </td>
+                          <td className="p-2 border text-right">
+                            ₹{item.rate}
+                          </td>
+                          <td className="p-2 border text-right">
+                            ₹{item.quantity * item.rate}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
-                <div className="text-right mt-3 space-y-1">
+                {/* Mobile card view */}
+                <div className="sm:hidden space-y-3">
+                  {order.items.map((item, i) => (
+                    <div
+                      key={i}
+                      className="border rounded p-2 text-sm"
+                    >
+                      <p className="font-semibold">
+                        {item.medicine?.name}
+                      </p>
+                      <p className="text-gray-500">
+                        {item.medicine?.company}
+                      </p>
+                      <p>
+                        Qty: {item.quantity} × ₹{item.rate}
+                      </p>
+                      <p className="font-bold">
+                        Total: ₹{item.quantity * item.rate}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="text-right mt-3 space-y-1 text-sm">
                   <p>Subtotal: ₹{order.subTotal}</p>
-                  <p>GST (12%): ₹{order.gstAmount}</p>
+                  <p>GST (5%): ₹{order.gstAmount}</p>
                   <p className="font-bold text-lg">
                     Grand Total: ₹{order.grandTotal}
                   </p>
