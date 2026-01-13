@@ -116,6 +116,7 @@ export default function MedicineForm({
         />
 
         <input
+          type="number"
           placeholder="Inputs / Pack"
           className="border p-2 rounded"
           value={inputs}
